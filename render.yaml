@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: latenode-webhook
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn webhook_server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: LATENODE_WEBHOOK_SECRET
+        sync: false
+      - key: LATENODE_API_URL
+        sync: false
+      - key: LATENODE_API_KEY
+        sync: false
+      - key: LATENODE_CALLBACK_URL
+        sync: false
