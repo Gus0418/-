@@ -1,0 +1,23 @@
+{
+  "supabase": {
+    "project_name": "Supabase token",
+    "project_id": "iixxaaeurdcyuvouqzlz",
+    "url": "https://iixxaaeurdcyuvouqzlz.supabase.co",
+    "region": "ap-southeast-1",
+    "webhook_endpoint": "https://iixxaaeurdcyuvouqzlz.supabase.co/functions/v1/latenode-webhook",
+    "tables": ["api_tokens", "webhook_logs", "integration_events", "notifications"]
+  },
+  "notion": {
+    "databases": {
+      "webhook_logs": "https://app.notion.com/p/496cff39ddef49589ab6de63eb8985fd",
+      "integration_events": "https://app.notion.com/p/d748dca2d5334dcb829590009543d818",
+      "notifications": "https://app.notion.com/p/aef054f7c68744c9ae54f50694e32dd9",
+      "dashboard": "https://app.notion.com/p/3804bd7df14a8111a087c2c73255aedf"
+    }
+  },
+  "latenode": {
+    "webhook_url": "https://iixxaaeurdcyuvouqzlz.supabase.co/functions/v1/latenode-webhook",
+    "auth_header": "X-Webhook-Secret",
+    "note": "Set WEBHOOK_SECRET in Supabase Edge Function environment variables"
+  }
+}
