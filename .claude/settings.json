@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Supabase__list_projects",
+      "mcp__Supabase__list_organizations",
+      "mcp__Supabase__get_project",
+      "mcp__Supabase__list_tables",
+      "mcp__Supabase__execute_sql",
+      "mcp__Supabase__apply_migration",
+      "mcp__Supabase__get_logs",
+      "mcp__Supabase__get_advisors",
+      "mcp__Supabase__get_project_url",
+      "mcp__Supabase__get_publishable_keys",
+      "mcp__Supabase__list_edge_functions",
+      "mcp__Supabase__get_edge_function",
+      "mcp__Supabase__deploy_edge_function",
+      "mcp__Supabase__list_migrations",
+      "mcp__Supabase__list_extensions",
+      "mcp__Supabase__restore_project",
+      "mcp__Supabase__pause_project",
+      "mcp__Supabase__create_project",
+      "mcp__Supabase__get_cost",
+      "mcp__Supabase__confirm_cost",
+      "mcp__Supabase__generate_typescript_types",
+      "mcp__Supabase__search_docs",
+      "mcp__Notion__notion-search",
+      "mcp__Notion__notion-fetch",
+      "mcp__Notion__notion-get-users",
+      "mcp__Notion__notion-get-teams",
+      "mcp__Notion__notion-get-comments",
+      "mcp__Notion__notion-create-pages",
+      "mcp__Notion__notion-create-database",
+      "mcp__Notion__notion-create-comment",
+      "mcp__Notion__notion-create-view",
+      "mcp__Notion__notion-update-page",
+      "mcp__Notion__notion-update-data-source",
+      "mcp__Notion__notion-update-view",
+      "mcp__Notion__notion-move-pages",
+      "mcp__Notion__notion-duplicate-page"
+    ]
+  }
+}
