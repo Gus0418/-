@@ -1,0 +1,26 @@
+name: Auto Self-Improve (Scheduled)
+
+on:
+  schedule:
+    - cron: "0 2 * * 1"  # 每週一凌晨2點
+  workflow_dispatch:
+
+jobs:
+  self-improve:
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci
+      - run: npm run self-improve
+      - name: Commit improvements
+        run: |
+          git config user.name "Claude Auto-Improve"
+          git config user.email "claude@anthropic.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "auto: self-improve $(date +%Y-%m-%d)"
+          git push

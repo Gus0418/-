@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  # Web 介面
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file: ../.env
+    restart: unless-stopped
+    volumes:
+      - ../.cache:/app/.cache
+      - ../generated:/app/generated
+
+  # MCP Memory Server
+  mcp-memory:
+    image: node:22-alpine
+    command: npx @modelcontextprotocol/server-memory
+    restart: unless-stopped
+
+  # MCP Filesystem Server
+  mcp-filesystem:
+    image: node:22-alpine
+    command: npx @modelcontextprotocol/server-filesystem /data
+    volumes:
+      - ../generated:/data
+    restart: unless-stopped
+
+  # Redis 快取（選用）
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  cache:
+  generated:

@@ -1,0 +1,33 @@
+{
+  "defaultModel": "claude-sonnet-4-6",
+  "fallbackChain": [
+    "claude-sonnet-4-6",
+    "claude-haiku-4-5-20251001",
+    "gpt-4o-mini",
+    "llama-3.3-70b-versatile"
+  ],
+  "limits": {
+    "maxTokensPerCall": 4096,
+    "maxRetries": 4,
+    "cacheEnabled": true,
+    "cacheTTLSeconds": 3600
+  },
+  "models": {
+    "claude-opus-4-8":           { "contextWindow": 200000, "outputLimit": 32000, "costPer1MIn": 15,   "costPer1MOut": 75   },
+    "claude-sonnet-4-6":         { "contextWindow": 200000, "outputLimit": 64000, "costPer1MIn": 3,    "costPer1MOut": 15   },
+    "claude-haiku-4-5-20251001": { "contextWindow": 200000, "outputLimit": 16000, "costPer1MIn": 0.25, "costPer1MOut": 1.25 },
+    "gpt-4o":                    { "contextWindow": 128000, "outputLimit": 16000, "costPer1MIn": 5,    "costPer1MOut": 15   },
+    "gpt-4o-mini":               { "contextWindow": 128000, "outputLimit": 16000, "costPer1MIn": 0.15, "costPer1MOut": 0.6  },
+    "gemini-2.0-flash":          { "contextWindow": 1000000,"outputLimit": 8000,  "costPer1MIn": 0.075,"costPer1MOut": 0.3  },
+    "llama-3.3-70b-versatile":   { "contextWindow": 128000, "outputLimit": 8000,  "costPer1MIn": 0.59, "costPer1MOut": 0.79 }
+  },
+  "taskRouting": {
+    "quick":    "claude-haiku-4-5-20251001",
+    "balanced": "claude-sonnet-4-6",
+    "complex":  "claude-opus-4-8",
+    "code":     "claude-sonnet-4-6",
+    "fast":     "llama-3.3-70b-versatile",
+    "vision":   "gemini-2.0-flash",
+    "cheap":    "gpt-4o-mini"
+  }
+}
