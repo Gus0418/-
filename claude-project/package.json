@@ -1,0 +1,32 @@
+{
+  "name": "claude-project",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "preview": "dotenv -e .env -- tsx preview.ts",
+    "run": "dotenv -e .env -- tsx run.ts",
+    "agent": "dotenv -e .env -- tsx agent-auto.ts",
+    "agent:batch": "dotenv -e .env -- tsx agent-auto.ts '' batch",
+    "web": "dotenv -e .env -- node web-server.mjs",
+    "dev": "dotenv -e .env -- tsx --watch run.ts",
+    "dev:web": "dotenv -e .env -- nodemon web-server.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "latest",
+    "@anthropic-ai/sdk": "latest",
+    "@ai-sdk/anthropic": "latest",
+    "@ai-sdk/openai": "latest",
+    "@ai-sdk/google": "latest",
+    "@modelcontextprotocol/sdk": "latest",
+    "ai": "latest",
+    "dotenv": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "tsx": "latest",
+    "typescript": "latest",
+    "dotenv-cli": "latest",
+    "nodemon": "latest"
+  }
+}
