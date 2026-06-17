@@ -9,6 +9,7 @@
     "agent:batch":    "dotenv -e .env -- tsx agent-auto.ts '' batch",
     "web":            "dotenv -e .env -- node web-server.mjs",
     "web:zh":         "dotenv -e .env -- node web-zh.mjs",
+    "web:full":       "dotenv -e .env -- node web-full.mjs",
     "install:full":   "bash install.sh",
     "dev":            "dotenv -e .env -- tsx --watch run.ts",
     "dev:web":        "dotenv -e .env -- nodemon web-server.mjs",

@@ -1,0 +1,49 @@
+/* 全動畫效果庫 */
+
+/* 淡入 */
+@keyframes fadeIn      { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+@keyframes fadeInLeft  { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:none; } }
+@keyframes fadeInRight { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:none; } }
+@keyframes fadeInScale { from { opacity:0; transform:scale(.92); } to { opacity:1; transform:scale(1); } }
+
+/* 脈衝 / 閃爍 */
+@keyframes pulse  { 0%,100% { opacity:1; } 50% { opacity:.5; } }
+@keyframes blink  { 0%,100% { opacity:1; } 50% { opacity:0; } }
+@keyframes bounce { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
+
+/* 旋轉 */
+@keyframes spin     { to { transform:rotate(360deg); } }
+@keyframes spinSlow { to { transform:rotate(360deg); animation-duration:3s; } }
+
+/* 打字機效果 */
+@keyframes typewriter { from { width:0; } to { width:100%; } }
+@keyframes cursor     { 0%,100% { border-color:transparent; } 50% { border-color:var(--accent); } }
+
+/* 霓虹閃爍 */
+@keyframes neonGlow {
+  0%,100% { text-shadow: 0 0 4px var(--accent), 0 0 10px var(--accent), 0 0 20px var(--accent); }
+  50%     { text-shadow: 0 0 2px var(--accent), 0 0 6px var(--accent); }
+}
+
+/* 漸層移動 */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 工具類 */
+.animate-fadeIn      { animation: fadeIn .4s ease both; }
+.animate-fadeInLeft  { animation: fadeInLeft .4s ease both; }
+.animate-fadeInRight { animation: fadeInRight .4s ease both; }
+.animate-fadeInScale { animation: fadeInScale .3s ease both; }
+.animate-pulse       { animation: pulse 2s infinite; }
+.animate-bounce      { animation: bounce 1s infinite; }
+.animate-spin        { animation: spin .7s linear infinite; }
+.animate-neon        { animation: neonGlow 1.5s ease-in-out infinite; }
+.animate-gradient    { background-size: 200% 200%; animation: gradientShift 4s ease infinite; }
+
+/* 延遲 */
+.delay-100 { animation-delay: .1s; }
+.delay-200 { animation-delay: .2s; }
+.delay-300 { animation-delay: .3s; }
