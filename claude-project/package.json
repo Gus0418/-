@@ -1,24 +1,46 @@
 {
   "name": "claude-project",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
-    "preview": "dotenv -e .env -- tsx preview.ts",
-    "run": "dotenv -e .env -- tsx run.ts",
-    "agent": "dotenv -e .env -- tsx agent-auto.ts",
-    "agent:batch": "dotenv -e .env -- tsx agent-auto.ts '' batch",
-    "web": "dotenv -e .env -- node web-server.mjs",
-    "dev": "dotenv -e .env -- tsx --watch run.ts",
-    "dev:web": "dotenv -e .env -- nodemon web-server.mjs"
+    "preview":       "dotenv -e .env -- tsx preview.ts",
+    "run":           "dotenv -e .env -- tsx run.ts",
+    "agent":         "dotenv -e .env -- tsx agent-auto.ts",
+    "agent:batch":   "dotenv -e .env -- tsx agent-auto.ts '' batch",
+    "web":           "dotenv -e .env -- node web-server.mjs",
+    "dev":           "dotenv -e .env -- tsx --watch run.ts",
+    "dev:web":       "dotenv -e .env -- nodemon web-server.mjs",
+    "auto-code":     "dotenv -e .env -- tsx auto-coder.ts",
+    "self-improve":  "dotenv -e .env -- tsx self-improve.ts",
+    "all-ai":        "dotenv -e .env -- tsx all-ai.ts",
+    "all-ai:race":   "dotenv -e .env -- tsx all-ai.ts '請介紹自己' race",
+    "all-ai:stream": "dotenv -e .env -- tsx all-ai.ts '你好' claude-sonnet-4-6"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "latest",
     "@anthropic-ai/sdk": "latest",
+    "@anthropic-ai/tokenizer": "latest",
+    "@anthropic-ai/bedrock-sdk": "latest",
+    "@anthropic-ai/vertex-sdk": "latest",
     "@ai-sdk/anthropic": "latest",
     "@ai-sdk/openai": "latest",
     "@ai-sdk/google": "latest",
+    "@ai-sdk/mistral": "latest",
+    "@ai-sdk/cohere": "latest",
     "@modelcontextprotocol/sdk": "latest",
+    "@modelcontextprotocol/server-filesystem": "latest",
+    "@modelcontextprotocol/server-memory": "latest",
+    "@modelcontextprotocol/server-sequential-thinking": "latest",
     "ai": "latest",
+    "openai": "latest",
+    "@google/generative-ai": "latest",
+    "groq-sdk": "latest",
+    "@mistralai/mistralai": "latest",
+    "cohere-ai": "latest",
+    "langchain": "latest",
+    "@langchain/anthropic": "latest",
+    "@langchain/openai": "latest",
+    "@langchain/google-genai": "latest",
     "dotenv": "latest",
     "zod": "latest"
   },
@@ -27,6 +49,7 @@
     "tsx": "latest",
     "typescript": "latest",
     "dotenv-cli": "latest",
-    "nodemon": "latest"
+    "nodemon": "latest",
+    "vitest": "latest"
   }
 }
