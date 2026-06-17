@@ -5,6 +5,7 @@ on:
     branches: [main, "claude/*"]
   pull_request:
     branches: [main]
+  workflow_dispatch:  # 支援手動觸發
 
 jobs:
   lint-and-type-check:

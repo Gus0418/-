@@ -1,0 +1,128 @@
+name: Manual Dispatch — 手動觸發所有功能
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "執行動作"
+        required: true
+        type: choice
+        options:
+          - auto-code       # 全自動生成程式碼
+          - self-improve    # 自我改善
+          - benchmark       # 效能基準測試
+          - all-ai-race     # 所有 AI 競賽
+          - agent           # 啟動 Agent
+          - web             # 啟動 Web 伺服器
+          - master-generate # 自動生成專案
+
+      prompt:
+        description: "任務描述或問題（部分動作需要）"
+        required: false
+        default: "分析專案並給出改善建議"
+
+      model:
+        description: "指定模型（留空自動選擇）"
+        required: false
+        type: choice
+        default: "auto"
+        options:
+          - auto
+          - claude-opus-4-8
+          - claude-sonnet-4-6
+          - claude-haiku-4-5-20251001
+          - gpt-4o
+          - gpt-4o-mini
+          - gemini-2.0-flash
+          - llama-3.3-70b-versatile
+
+      notify:
+        description: "完成後是否顯示摘要"
+        required: false
+        type: boolean
+        default: true
+
+env:
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  OPENAI_API_KEY:    ${{ secrets.OPENAI_API_KEY }}
+  GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+  GROQ_API_KEY:      ${{ secrets.GROQ_API_KEY }}
+  MISTRAL_API_KEY:   ${{ secrets.MISTRAL_API_KEY }}
+  COHERE_API_KEY:    ${{ secrets.COHERE_API_KEY }}
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: 安裝依賴
+        working-directory: claude-project
+        run: npm install
+
+      - name: 執行 — auto-code
+        if: inputs.action == 'auto-code'
+        working-directory: claude-project
+        run: npx tsx auto-coder.ts
+
+      - name: 執行 — self-improve
+        if: inputs.action == 'self-improve'
+        working-directory: claude-project
+        run: npx tsx self-improve.ts
+
+      - name: 執行 — benchmark
+        if: inputs.action == 'benchmark'
+        working-directory: claude-project
+        run: npx tsx scripts/benchmark.ts
+
+      - name: 執行 — all-ai-race
+        if: inputs.action == 'all-ai-race'
+        working-directory: claude-project
+        run: npx tsx all-ai.ts "${{ inputs.prompt }}" race
+
+      - name: 執行 — agent
+        if: inputs.action == 'agent'
+        working-directory: claude-project
+        run: echo "${{ inputs.prompt }}" | npx tsx agent-auto.ts "${{ inputs.prompt }}"
+
+      - name: 執行 — master-generate
+        if: inputs.action == 'master-generate'
+        working-directory: claude-project
+        run: npx tsx master.ts generate ${{ inputs.prompt }}
+
+      - name: 上傳生成的檔案
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-${{ inputs.action }}-${{ github.run_number }}
+          path: |
+            claude-project/generated/
+            claude-project/auto-coder.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: 顯示摘要
+        if: inputs.notify == true
+        run: |
+          echo "## ✅ Dispatch 完成" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 項目 | 值 |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| 動作 | ${{ inputs.action }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 提示 | ${{ inputs.prompt }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 模型 | ${{ inputs.model }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 時間 | $(date '+%Y-%m-%d %H:%M:%S') |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Commit 生成結果（若有新檔案）
+        if: inputs.action == 'auto-code' || inputs.action == 'master-generate'
+        run: |
+          git config user.name "Claude Dispatch Bot"
+          git config user.email "claude@anthropic.com"
+          git add claude-project/generated/ || true
+          git diff --staged --quiet || git commit -m "dispatch: ${{ inputs.action }} $(date +%Y-%m-%d-%H%M)"
+          git push || true
