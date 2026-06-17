@@ -11,10 +11,26 @@ const client = new Anthropic();
 const PORT = process.env.PORT || 3000;
 
 const THEMES = [
-  "dark","light","neon","minimal","glass","tech","nature",
-  "retro","ocean","sunset","arctic","forest","luxury",
-  "cyberpunk","sakura","dracula","monokai","nord",
-  "solarized-dark","material",
+  { val:"dark",        label:"🌑 深色（預設）"   },
+  { val:"light",       label:"☀️ 亮色"           },
+  { val:"neon",        label:"💥 霓虹賽博"        },
+  { val:"minimal",     label:"⬜ 極簡白"          },
+  { val:"glass",       label:"🪟 玻璃擬態"        },
+  { val:"tech",        label:"🖥️ 科技藍"          },
+  { val:"nature",      label:"🌿 自然綠"          },
+  { val:"retro",       label:"📟 復古終端機"      },
+  { val:"ocean",       label:"🌊 深海藍"          },
+  { val:"sunset",      label:"🌅 日落橙紫"        },
+  { val:"arctic",      label:"❄️ 北極白藍"        },
+  { val:"forest",      label:"🌲 森林深綠"        },
+  { val:"luxury",      label:"✨ 奢華金黑"        },
+  { val:"cyberpunk",   label:"🤖 賽博龐克"        },
+  { val:"sakura",      label:"🌸 粉嫩櫻花"        },
+  { val:"dracula",     label:"🧛 德古拉暗色"      },
+  { val:"monokai",     label:"🎨 Monokai 程式碼" },
+  { val:"nord",        label:"🏔️ 北歐清冷"        },
+  { val:"solarized-dark", label:"🌞 護眼深色"    },
+  { val:"material",    label:"📐 Material 設計"  },
 ];
 
 const MODELS = {
@@ -40,7 +56,7 @@ const MODEL_OPTIONS = Object.entries(MODELS)
   .join("\n");
 
 const THEME_OPTIONS = THEMES
-  .map(t => `<option value="${t}">${t.replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase())}</option>`)
+  .map(t => `<option value="${t.val}">${t.label}</option>`)
   .join("\n");
 
 const HTML = `<!DOCTYPE html>
@@ -184,7 +200,7 @@ button:disabled{opacity:.35;cursor:not-allowed;}
     </div>
     <div class="card">
       <h3>🎨 所有主題</h3>
-      <div>${THEMES.map(t=>`<span class="chip" style="cursor:pointer" onclick="setTheme('${t}')">${t}</span>`).join("")}</div>
+      <div>${THEMES.map(t=>`<span class="chip" style="cursor:pointer" onclick="setTheme('${t.val}')" title="${t.val}">${t.label}</span>`).join("")}</div>
     </div>
   </div>
   <div class="card">
@@ -194,8 +210,18 @@ button:disabled{opacity:.35;cursor:not-allowed;}
   <div class="card">
     <h3>📦 npm 指令</h3>
     <div class="g3">
-      ${["preview","run","agent","web","web:zh","web:full","auto-code","self-improve","all-ai:race","master","master:race","benchmark"]
-        .map(s=>`<code style="font-size:.75rem;background:var(--surface2);padding:.2rem .5rem;border-radius:4px">npm run ${s}</code>`).join("")}
+      ${[
+          ["preview",      "驗證連線"],
+          ["run",          "執行主程式"],
+          ["agent",        "自動Agent"],
+          ["web:full",     "全功能介面"],
+          ["auto-code",    "自動寫程式"],
+          ["self-improve", "自我改善"],
+          ["all-ai:race",  "AI競賽"],
+          ["master",       "主控對話"],
+          ["benchmark",    "效能測試"],
+          ["install:full", "完整安裝"],
+        ].map(([s,l])=>`<div style="display:flex;flex-direction:column;gap:.1rem"><code style="font-size:.72rem;background:var(--surface2);padding:.2rem .5rem;border-radius:4px">npm run ${s}</code><span style="font-size:.7rem;color:var(--muted)">${l}</span></div>`).join("")}
     </div>
   </div>
 </div>
