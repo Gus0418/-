@@ -38,9 +38,62 @@ export const ALL_MODELS = {
   // Cohere
   "command-r-plus":       { provider: "cohere", name: "Command R+" },
   "command-r":            { provider: "cohere", name: "Command R" },
+  // ── OpenRouter (300+ 模型，用 or/ 前綴) ──────────────────────────
+  "or/anthropic/claude-opus-4":        { provider: "openrouter", name: "OR: Claude Opus 4" },
+  "or/openai/gpt-4o":                  { provider: "openrouter", name: "OR: GPT-4o" },
+  "or/google/gemini-2.0-flash-001":    { provider: "openrouter", name: "OR: Gemini 2.0 Flash" },
+  "or/meta-llama/llama-3.3-70b-instruct": { provider: "openrouter", name: "OR: Llama 3.3 70B" },
+  "or/deepseek/deepseek-chat":         { provider: "openrouter", name: "OR: DeepSeek V3" },
+  "or/deepseek/deepseek-r1":           { provider: "openrouter", name: "OR: DeepSeek R1 (推理)" },
+  "or/qwen/qwen-2.5-72b-instruct":     { provider: "openrouter", name: "OR: Qwen 2.5 72B" },
+  "or/mistralai/mistral-large":        { provider: "openrouter", name: "OR: Mistral Large" },
+  "or/x-ai/grok-3":                   { provider: "openrouter", name: "OR: Grok 3 (xAI)" },
+  "or/cohere/command-r-plus-08-2024":  { provider: "openrouter", name: "OR: Command R+" },
 } as const;
 
 export type ModelId = keyof typeof ALL_MODELS;
+
+// ── OpenRouter 客戶端（OpenAI 相容格式）──────────────────────────────
+function getOpenRouterClient() {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) throw new Error("請設定 OPENROUTER_API_KEY 環境變數");
+  return new OpenAI({
+    baseURL: "https://openrouter.ai/api/v1",
+    apiKey: key,
+    defaultHeaders: {
+      "HTTP-Referer": "https://github.com/Gus0418/-",
+      "X-Title": "Claude Master System",
+    },
+  });
+}
+
+// 用 OpenRouter 呼叫任意模型（移除 or/ 前綴取得真實 model id）
+async function askOpenRouter(
+  modelId: string,
+  prompt: string,
+  options: { system?: string; maxTokens?: number } = {}
+): Promise<string> {
+  const client = getOpenRouterClient();
+  const realModel = modelId.replace(/^or\//, "");
+  const res = await client.chat.completions.create({
+    model: realModel,
+    max_tokens: options.maxTokens ?? 1024,
+    messages: [
+      ...(options.system ? [{ role: "system" as const, content: options.system }] : []),
+      { role: "user" as const, content: prompt },
+    ],
+  });
+  return res.choices[0]?.message?.content ?? "";
+}
+
+// 用 OpenRouter 呼叫任意未在 ALL_MODELS 裡的模型（自由模式）
+export async function askOpenRouterFree(
+  model: string,
+  prompt: string,
+  options: { system?: string; maxTokens?: number } = {}
+): Promise<string> {
+  return askOpenRouter(model, prompt, options);
+}
 
 // ── 統一呼叫介面 ─────────────────────────────────────────────────────
 export async function askAI(
@@ -111,6 +164,9 @@ export async function askAI(
       });
       return text;
     }
+
+    case "openrouter":
+      return askOpenRouter(modelId, prompt, options);
 
     default:
       throw new Error(`未知供應商: ${info.provider}`);

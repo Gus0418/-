@@ -34,15 +34,28 @@ const THEMES = [
 ];
 
 const MODELS = {
-  "Claude Opus 4.8":    "claude-opus-4-8",
-  "Claude Sonnet 4.6":  "claude-sonnet-4-6",
-  "Claude Haiku 4.5":   "claude-haiku-4-5-20251001",
-  "GPT-4o":             "gpt-4o",
-  "GPT-4o Mini":        "gpt-4o-mini",
-  "Gemini 2.0 Flash":   "gemini-2.0-flash",
-  "Llama 3.3 70B":      "llama-3.3-70b-versatile",
-  "Mistral Large":      "mistral-large-latest",
-  "Command R+":         "command-r-plus",
+  "── 直連 Anthropic ──":       "",
+  "Claude Opus 4.8":            "claude-opus-4-8",
+  "Claude Sonnet 4.6":          "claude-sonnet-4-6",
+  "Claude Haiku 4.5":           "claude-haiku-4-5-20251001",
+  "── 直連 OpenAI ──":          "",
+  "GPT-4o":                     "gpt-4o",
+  "GPT-4o Mini":                "gpt-4o-mini",
+  "── 直連 Google ──":          "",
+  "Gemini 2.0 Flash":           "gemini-2.0-flash",
+  "── 直連 Groq/Mistral ──":    "",
+  "Llama 3.3 70B (Groq)":       "llama-3.3-70b-versatile",
+  "Mistral Large":               "mistral-large-latest",
+  "Command R+":                  "command-r-plus",
+  "── OpenRouter (300+ 模型) ──": "",
+  "OR: Claude Opus 4":          "or/anthropic/claude-opus-4",
+  "OR: GPT-4o":                 "or/openai/gpt-4o",
+  "OR: Gemini 2.0 Flash":       "or/google/gemini-2.0-flash-001",
+  "OR: DeepSeek V3":            "or/deepseek/deepseek-chat",
+  "OR: DeepSeek R1 (推理)":     "or/deepseek/deepseek-r1",
+  "OR: Llama 3.3 70B":          "or/meta-llama/llama-3.3-70b-instruct",
+  "OR: Qwen 2.5 72B":           "or/qwen/qwen-2.5-72b-instruct",
+  "OR: Grok 3 (xAI)":           "or/x-ai/grok-3",
 };
 
 // 讀取 themes.css
@@ -52,7 +65,9 @@ const THEMES_CSS = fs.existsSync(THEMES_CSS_PATH) ? fs.readFileSync(THEMES_CSS_P
 const ANIM_CSS   = fs.existsSync(ANIM_CSS_PATH)   ? fs.readFileSync(ANIM_CSS_PATH, "utf-8") : "";
 
 const MODEL_OPTIONS = Object.entries(MODELS)
-  .map(([label, val]) => `<option value="${val}">${label}</option>`)
+  .map(([label, val]) => val === ""
+    ? `<option value="" disabled>──────────── ${label} ────────────</option>`
+    : `<option value="${val}">${label}</option>`)
   .join("\n");
 
 const THEME_OPTIONS = THEMES
@@ -349,11 +364,38 @@ const server = http.createServer(async (req, res) => {
         const { message, model, task } = JSON.parse(body);
         const prompt = message || task || "Hello";
         const useModel = model || "claude-sonnet-4-6";
-        const msg = await client.messages.create({
-          model: useModel, max_tokens: 1024,
-          messages: [{ role: "user", content: prompt }],
-        });
-        const text = msg.content[0].type === "text" ? msg.content[0].text : "";
+        let text = "";
+
+        if (useModel.startsWith("or/")) {
+          // OpenRouter 路徑
+          const orKey = process.env.OPENROUTER_API_KEY;
+          if (!orKey) throw new Error("請設定 OPENROUTER_API_KEY");
+          const realModel = useModel.replace(/^or\//, "");
+          const orRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${orKey}`,
+              "Content-Type": "application/json",
+              "HTTP-Referer": "https://github.com/Gus0418/-",
+              "X-Title": "Claude Master System",
+            },
+            body: JSON.stringify({
+              model: realModel,
+              max_tokens: 1024,
+              messages: [{ role: "user", content: prompt }],
+            }),
+          });
+          const orJson = await orRes.json();
+          text = orJson.choices?.[0]?.message?.content ?? JSON.stringify(orJson);
+        } else {
+          // 直連 Anthropic
+          const msg = await client.messages.create({
+            model: useModel, max_tokens: 1024,
+            messages: [{ role: "user", content: prompt }],
+          });
+          text = msg.content[0].type === "text" ? msg.content[0].text : "";
+        }
+
         json(200, { text, model: useModel });
       } catch (e) { json(500, { error: e.message }); }
     });
