@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-filesystem", "./generated"],
+      "description": "讀寫本地檔案系統"
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-memory"],
+      "description": "持久化記憶體儲存"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-sequential-thinking"],
+      "description": "分步推理工具"
+    },
+    "everything": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-everything"],
+      "description": "測試用全功能 MCP Server"
+    }
+  }
+}

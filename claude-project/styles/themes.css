@@ -1,0 +1,294 @@
+/* ═══════════════════════════════════════════════════════════
+   Claude Master System — 全風格主題庫
+   包含：暗色 / 亮色 / 霓虹 / 極簡 / 玻璃 / 科技 / 自然 /
+         復古 / 海洋 / 日落 / 北極 / 森林 / 奢華 / 賽博朋克
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 基礎變數架構 ─────────────────────────────────────────── */
+:root {
+  --bg: #0f172a; --surface: #1e293b; --surface2: #334155;
+  --border: #475569; --text: #e2e8f0; --muted: #94a3b8;
+  --accent: #7c3aed; --accent2: #0ea5e9; --accent3: #10b981;
+  --warn: #f59e0b; --err: #ef4444; --success: #22c55e;
+  --radius: 12px; --font: "Segoe UI", system-ui, sans-serif;
+  --shadow: 0 4px 24px rgba(0,0,0,.4);
+  --transition: .2s cubic-bezier(.4,0,.2,1);
+}
+
+/* ══════════════════════════════════════════════════════════
+   1. DARK — 深色（預設）
+   ══════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  --bg: #0f172a; --surface: #1e293b; --surface2: #334155;
+  --border: #475569; --text: #e2e8f0; --muted: #94a3b8;
+  --accent: #7c3aed; --accent2: #0ea5e9;
+}
+
+/* ══════════════════════════════════════════════════════════
+   2. LIGHT — 亮色
+   ══════════════════════════════════════════════════════════ */
+[data-theme="light"] {
+  --bg: #f8fafc; --surface: #ffffff; --surface2: #f1f5f9;
+  --border: #e2e8f0; --text: #0f172a; --muted: #64748b;
+  --accent: #7c3aed; --accent2: #0284c7;
+  --shadow: 0 4px 24px rgba(0,0,0,.08);
+}
+
+/* ══════════════════════════════════════════════════════════
+   3. NEON — 霓虹賽博
+   ══════════════════════════════════════════════════════════ */
+[data-theme="neon"] {
+  --bg: #000000; --surface: #0d0d0d; --surface2: #1a0033;
+  --border: #ff00ff44; --text: #ffffff; --muted: #cc00cc;
+  --accent: #ff00ff; --accent2: #00ffff; --accent3: #ff6600;
+  --shadow: 0 0 30px #ff00ff44, 0 0 60px #00ffff22;
+}
+[data-theme="neon"] button { box-shadow: 0 0 12px var(--accent); }
+[data-theme="neon"] input, [data-theme="neon"] select {
+  box-shadow: 0 0 8px var(--accent2) inset;
+}
+[data-theme="neon"] .card { border: 1px solid var(--accent); box-shadow: 0 0 20px var(--accent)44; }
+
+/* ══════════════════════════════════════════════════════════
+   4. MINIMAL — 極簡白
+   ══════════════════════════════════════════════════════════ */
+[data-theme="minimal"] {
+  --bg: #ffffff; --surface: #fafafa; --surface2: #f5f5f5;
+  --border: #e0e0e0; --text: #212121; --muted: #757575;
+  --accent: #212121; --accent2: #424242;
+  --radius: 4px; --shadow: none;
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+[data-theme="minimal"] button { border-radius: 2px; letter-spacing: .05em; text-transform: uppercase; font-size: .75rem; }
+
+/* ══════════════════════════════════════════════════════════
+   5. GLASS — 玻璃擬態
+   ══════════════════════════════════════════════════════════ */
+[data-theme="glass"] {
+  --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --surface: rgba(255,255,255,.12);
+  --surface2: rgba(255,255,255,.08);
+  --border: rgba(255,255,255,.25);
+  --text: #ffffff; --muted: rgba(255,255,255,.65);
+  --accent: rgba(255,255,255,.9); --accent2: #a78bfa;
+  --shadow: 0 8px 32px rgba(31,38,135,.37);
+}
+[data-theme="glass"] .card {
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+[data-theme="glass"] nav {
+  backdrop-filter: blur(20px);
+  background: rgba(255,255,255,.1);
+}
+
+/* ══════════════════════════════════════════════════════════
+   6. TECH — 科技藍
+   ══════════════════════════════════════════════════════════ */
+[data-theme="tech"] {
+  --bg: #020c1b; --surface: #0a192f; --surface2: #112240;
+  --border: #1d3461; --text: #ccd6f6; --muted: #8892b0;
+  --accent: #64ffda; --accent2: #57cbff; --accent3: #ff79c6;
+  --font: "Courier New", Courier, monospace;
+}
+[data-theme="tech"] .card { border-left: 3px solid var(--accent); }
+[data-theme="tech"] h1, [data-theme="tech"] h3 { color: var(--accent); }
+[data-theme="tech"] button.btn-primary { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+
+/* ══════════════════════════════════════════════════════════
+   7. NATURE — 自然綠
+   ══════════════════════════════════════════════════════════ */
+[data-theme="nature"] {
+  --bg: #1a2e1a; --surface: #243524; --surface2: #2d4a2d;
+  --border: #3d6e3d; --text: #d4e8c2; --muted: #8aad72;
+  --accent: #6dbf67; --accent2: #a8d5a2; --accent3: #f4a261;
+}
+[data-theme="nature"] nav { background: #152415; border-bottom: 2px solid var(--accent); }
+
+/* ══════════════════════════════════════════════════════════
+   8. RETRO — 復古終端機
+   ══════════════════════════════════════════════════════════ */
+[data-theme="retro"] {
+  --bg: #000000; --surface: #001100; --surface2: #002200;
+  --border: #00ff00; --text: #00ff00; --muted: #008800;
+  --accent: #00ff00; --accent2: #ffff00; --accent3: #ff6600;
+  --font: "Courier New", Courier, monospace;
+  --radius: 0;
+}
+[data-theme="retro"] * { text-shadow: 0 0 8px #00ff00; }
+[data-theme="retro"] button { border: 1px solid #00ff00; background: #000; color: #00ff00; }
+[data-theme="retro"] .card { border: 1px solid #00ff00; box-shadow: 0 0 10px #00ff0044; }
+[data-theme="retro"] nav::before { content: "[ CLAUDE MASTER SYSTEM v3.0 ] "; }
+
+/* ══════════════════════════════════════════════════════════
+   9. OCEAN — 深海藍
+   ══════════════════════════════════════════════════════════ */
+[data-theme="ocean"] {
+  --bg: #03111f; --surface: #061e32; --surface2: #0a2d4a;
+  --border: #1a4f72; --text: #b8e0f7; --muted: #6baed6;
+  --accent: #00b4d8; --accent2: #48cae4; --accent3: #90e0ef;
+}
+[data-theme="ocean"] .card {
+  background: linear-gradient(135deg, var(--surface), var(--surface2));
+}
+[data-theme="ocean"] nav {
+  background: linear-gradient(90deg, #03111f, #061e32);
+  border-bottom: 1px solid var(--accent2);
+}
+
+/* ══════════════════════════════════════════════════════════
+   10. SUNSET — 日落橙紫
+   ══════════════════════════════════════════════════════════ */
+[data-theme="sunset"] {
+  --bg: #1a0a2e; --surface: #2d1547; --surface2: #3d1f5c;
+  --border: #7b2d8b; --text: #ffdab9; --muted: #d4a0c8;
+  --accent: #ff6b6b; --accent2: #ffa07a; --accent3: #ffec8b;
+}
+[data-theme="sunset"] nav {
+  background: linear-gradient(90deg, #1a0a2e, #4a1a7a);
+}
+[data-theme="sunset"] button.btn-primary {
+  background: linear-gradient(135deg, #ff6b6b, #ffa07a);
+  border: none;
+}
+
+/* ══════════════════════════════════════════════════════════
+   11. ARCTIC — 北極白藍
+   ══════════════════════════════════════════════════════════ */
+[data-theme="arctic"] {
+  --bg: #e8f4f8; --surface: #ffffff; --surface2: #d1ecf5;
+  --border: #a8d8ea; --text: #1a3a4a; --muted: #5a8a9f;
+  --accent: #0077b6; --accent2: #00b4d8; --accent3: #48cae4;
+  --shadow: 0 4px 24px rgba(0,119,182,.12);
+}
+[data-theme="arctic"] nav { background: rgba(255,255,255,.8); backdrop-filter: blur(10px); }
+
+/* ══════════════════════════════════════════════════════════
+   12. FOREST — 森林深綠
+   ══════════════════════════════════════════════════════════ */
+[data-theme="forest"] {
+  --bg: #0d1f0d; --surface: #1a2e1a; --surface2: #243524;
+  --border: #2d5a1b; --text: #c8e6c2; --muted: #7cb87a;
+  --accent: #4caf50; --accent2: #81c784; --accent3: #ffb74d;
+}
+[data-theme="forest"] .card {
+  border-left: 4px solid var(--accent);
+}
+
+/* ══════════════════════════════════════════════════════════
+   13. LUXURY — 奢華金黑
+   ══════════════════════════════════════════════════════════ */
+[data-theme="luxury"] {
+  --bg: #0a0a0a; --surface: #141414; --surface2: #1e1e1e;
+  --border: #b8960c44; --text: #f5e6c8; --muted: #c9a84c;
+  --accent: #d4af37; --accent2: #f0d060; --accent3: #8b6914;
+  --font: Georgia, "Times New Roman", serif;
+}
+[data-theme="luxury"] .card { border: 1px solid #d4af3744; box-shadow: 0 4px 20px #d4af3722; }
+[data-theme="luxury"] h1, [data-theme="luxury"] h3 { color: var(--accent); letter-spacing: .08em; }
+[data-theme="luxury"] button.btn-primary { background: linear-gradient(135deg, #d4af37, #f0d060); color: #000; }
+
+/* ══════════════════════════════════════════════════════════
+   14. CYBERPUNK — 賽博龐克
+   ══════════════════════════════════════════════════════════ */
+[data-theme="cyberpunk"] {
+  --bg: #0d0221; --surface: #160038; --surface2: #1f0050;
+  --border: #ff2d78; --text: #f0f0f0; --muted: #a0a0c0;
+  --accent: #ff2d78; --accent2: #feef00; --accent3: #00ff9f;
+  --font: "Courier New", Courier, monospace;
+}
+[data-theme="cyberpunk"] * { border-radius: 0 !important; }
+[data-theme="cyberpunk"] .card {
+  border: 1px solid var(--accent);
+  box-shadow: 4px 4px 0 var(--accent2), -2px -2px 0 var(--accent3);
+}
+[data-theme="cyberpunk"] button {
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+[data-theme="cyberpunk"] nav {
+  border-bottom: 2px solid var(--accent);
+  box-shadow: 0 4px 20px var(--accent)44;
+}
+
+/* ══════════════════════════════════════════════════════════
+   15. SAKURA — 粉嫩櫻花
+   ══════════════════════════════════════════════════════════ */
+[data-theme="sakura"] {
+  --bg: #fff0f5; --surface: #ffffff; --surface2: #ffe0eb;
+  --border: #ffb3cc; --text: #4a1020; --muted: #9c5070;
+  --accent: #e91e8c; --accent2: #ff6eb4; --accent3: #ff9a3c;
+  --shadow: 0 4px 24px rgba(233,30,140,.1);
+}
+[data-theme="sakura"] nav { background: linear-gradient(90deg, #ffe0eb, #fff0f5); }
+[data-theme="sakura"] .card { border: 1px solid var(--border); }
+
+/* ══════════════════════════════════════════════════════════
+   16. DRACULA — 德古拉暗色
+   ══════════════════════════════════════════════════════════ */
+[data-theme="dracula"] {
+  --bg: #282a36; --surface: #1e1f29; --surface2: #44475a;
+  --border: #6272a4; --text: #f8f8f2; --muted: #6272a4;
+  --accent: #bd93f9; --accent2: #8be9fd; --accent3: #50fa7b;
+  --warn: #ffb86c; --err: #ff5555;
+}
+
+/* ══════════════════════════════════════════════════════════
+   17. MONOKAI — 程式碼經典
+   ══════════════════════════════════════════════════════════ */
+[data-theme="monokai"] {
+  --bg: #272822; --surface: #1e1f1c; --surface2: #3e3d32;
+  --border: #75715e; --text: #f8f8f2; --muted: #75715e;
+  --accent: #a6e22e; --accent2: #66d9e8; --accent3: #fd971f;
+  --font: "Fira Code", "Courier New", monospace;
+}
+
+/* ══════════════════════════════════════════════════════════
+   18. NORD — 北歐清冷
+   ══════════════════════════════════════════════════════════ */
+[data-theme="nord"] {
+  --bg: #2e3440; --surface: #3b4252; --surface2: #434c5e;
+  --border: #4c566a; --text: #eceff4; --muted: #d8dee9;
+  --accent: #88c0d0; --accent2: #81a1c1; --accent3: #a3be8c;
+  --warn: #ebcb8b; --err: #bf616a;
+}
+
+/* ══════════════════════════════════════════════════════════
+   19. SOLARIZED — 護眼色
+   ══════════════════════════════════════════════════════════ */
+[data-theme="solarized-dark"] {
+  --bg: #002b36; --surface: #073642; --surface2: #094554;
+  --border: #586e75; --text: #839496; --muted: #657b83;
+  --accent: #268bd2; --accent2: #2aa198; --accent3: #859900;
+  --warn: #b58900; --err: #dc322f;
+}
+[data-theme="solarized-light"] {
+  --bg: #fdf6e3; --surface: #eee8d5; --surface2: #ddd8c5;
+  --border: #93a1a1; --text: #657b83; --muted: #839496;
+  --accent: #268bd2; --accent2: #2aa198; --accent3: #859900;
+}
+
+/* ══════════════════════════════════════════════════════════
+   20. MATERIAL — Material Design
+   ══════════════════════════════════════════════════════════ */
+[data-theme="material"] {
+  --bg: #121212; --surface: #1e1e1e; --surface2: #2c2c2c;
+  --border: #3c3c3c; --text: #e0e0e0; --muted: #9e9e9e;
+  --accent: #bb86fc; --accent2: #03dac6; --accent3: #cf6679;
+  --radius: 4px;
+}
+[data-theme="material"] .card { box-shadow: 0 2px 4px rgba(0,0,0,.5), 0 4px 8px rgba(0,0,0,.3); border: none; }
+[data-theme="material"] button { box-shadow: 0 2px 4px rgba(0,0,0,.5); }
+
+/* ══════════════════════════════════════════════════════════
+   通用工具類別（所有主題共用）
+   ══════════════════════════════════════════════════════════ */
+body { background: var(--bg); color: var(--text); font-family: var(--font); transition: background var(--transition), color var(--transition); }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; box-shadow: var(--shadow); transition: all var(--transition); }
+.card:hover { border-color: var(--accent); }
+button { border-radius: var(--radius); transition: all var(--transition); }
+button.btn-primary { background: var(--accent); color: #fff; border: none; }
+button.btn-secondary { background: var(--accent2); color: #fff; border: none; }
+input, select, textarea { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius); transition: border-color var(--transition); }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent)22; }

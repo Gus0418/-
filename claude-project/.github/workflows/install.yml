@@ -1,0 +1,58 @@
+name: Install & Verify Full System
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_benchmark:
+        description: "安裝後執行效能測試"
+        type: boolean
+        default: false
+
+env:
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  OPENAI_API_KEY:    ${{ secrets.OPENAI_API_KEY }}
+  GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+  GROQ_API_KEY:      ${{ secrets.GROQ_API_KEY }}
+  MISTRAL_API_KEY:   ${{ secrets.MISTRAL_API_KEY }}
+  COHERE_API_KEY:    ${{ secrets.COHERE_API_KEY }}
+
+jobs:
+  install-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 執行完整安裝腳本
+        working-directory: claude-project
+        run: |
+          chmod +x install.sh
+          bash install.sh
+
+      - name: 驗證系統入口
+        working-directory: claude-project
+        run: |
+          echo ".env.example" && cp .env.example .env
+          npx tsx -e "import { systemStatus } from './index.ts'; console.log(JSON.stringify(systemStatus(), null, 2))"
+
+      - name: 執行效能基準測試
+        if: inputs.run_benchmark
+        working-directory: claude-project
+        run: npx dotenv -e .env -- tsx scripts/benchmark.ts
+
+      - name: 輸出安裝摘要
+        run: |
+          echo "## 🚀 系統安裝完成" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 已安裝套件" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          npm list -g --depth=0 2>/dev/null | grep -E "anthropic|openai|ai-sdk|langchain|mcp|groq|mistral|cohere" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
