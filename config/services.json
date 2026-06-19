@@ -5,7 +5,8 @@
     "url": "https://iixxaaeurdcyuvouqzlz.supabase.co",
     "region": "ap-southeast-1",
     "webhook_endpoint": "https://iixxaaeurdcyuvouqzlz.supabase.co/functions/v1/latenode-webhook",
-    "tables": ["api_tokens", "webhook_logs", "integration_events", "notifications"]
+    "tables": ["api_tokens", "webhook_logs", "integration_events", "notifications"],
+    "universal_api_endpoint": "https://iixxaaeurdcyuvouqzlz.supabase.co/functions/v1/universal-api"
   },
   "notion": {
     "databases": {
