@@ -12,9 +12,10 @@ export async function apiFetch(path, options = {}) {
   return res.json()
 }
 
-// Streaming chat — returns async generator of text chunks
-export async function* chatStream(messages, context) {
-  const res = await fetch(`${BASE}/api/chat`, {
+// Streaming chat — model: 'claude' | 'gpt4o'
+export async function* chatStream(messages, context, model = 'claude') {
+  const endpoint = model === 'gpt4o' ? '/api/chat-gpt' : '/api/chat'
+  const res = await fetch(`${BASE}${endpoint}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages, context }),
@@ -40,4 +41,17 @@ export async function* chatStream(messages, context) {
       if (json.error) throw new Error(json.error)
     }
   }
+}
+
+// Whisper 語音轉文字 — audioBlob: Blob (webm/ogg/mp4)
+export async function transcribeAudio(audioBlob) {
+  const form = new FormData()
+  form.append('audio', audioBlob, 'recording.webm')
+  const res = await fetch(`${BASE}/api/transcribe`, { method: 'POST', body: form })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }))
+    throw new Error(err.error || 'Transcription failed')
+  }
+  const data = await res.json()
+  return data.text
 }
