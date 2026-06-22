@@ -9,6 +9,7 @@ import WebhookLogs from './pages/WebhookLogs'
 import IntegrationEvents from './pages/IntegrationEvents'
 import ApiTokens from './pages/ApiTokens'
 import AiChat from './pages/AiChat'
+import WebhookTester from './pages/WebhookTester'
 
 function ProtectedRoute({ session, children }) {
   if (!session) return <Navigate to="/login" replace />
@@ -55,6 +56,7 @@ export default function App() {
                   <Route path="/integration-events" element={<IntegrationEvents />} />
                   <Route path="/api-tokens" element={<ApiTokens />} />
                   <Route path="/ai-chat" element={<AiChat />} />
+                  <Route path="/webhook-tester" element={<WebhookTester />} />
                 </Routes>
               </Layout>
             </ProtectedRoute>

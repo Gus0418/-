@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Bell, Webhook, GitBranch, KeyRound, ArrowRight, RefreshCw } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { useRealtimeNotifications, useRealtimeWebhooks } from '../lib/realtime'
 import StatCard from '../components/StatCard'
 import StatusBadge from '../components/StatusBadge'
 
@@ -36,6 +37,10 @@ export default function Dashboard() {
   }
 
   useEffect(() => { fetchData() }, [])
+
+  // 即時更新：新通知 / 新 webhook 進來自動刷新
+  useRealtimeNotifications(() => fetchData())
+  useRealtimeWebhooks(() => fetchData())
 
   const STAT_ITEMS = [
     { icon: Bell, label: '未讀通知', value: stats?.unreadNotif, sub: '待查看的通知', accent: true },

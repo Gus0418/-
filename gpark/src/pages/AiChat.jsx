@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, Bot, User, Trash2, Sparkles, Mic, MicOff, Square } from 'lucide-react'
-import { chatStream, transcribeAudio } from '../lib/api'
+import { Send, Bot, User, Trash2, Sparkles, Mic, Square, ImagePlus, X } from 'lucide-react'
+import { chatStream, transcribeAudio, analyzeImage } from '../lib/api'
 import PageHeader from '../components/PageHeader'
 
 const MODELS = [
@@ -22,10 +22,14 @@ export default function AiChat() {
   const [model, setModel] = useState('claude')
   const [recording, setRecording] = useState(false)
   const [transcribing, setTranscribing] = useState(false)
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
+  const [analyzingImage, setAnalyzingImage] = useState(false)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
   const mediaRef = useRef(null)
   const chunksRef = useRef([])
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -101,6 +105,41 @@ export default function AiChat() {
     setRecording(false)
   }
 
+  // --- Image upload ---
+  const handleImageSelect = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
+    // Switch to GPT-4o automatically for vision
+    setModel('gpt4o')
+  }
+
+  const handleAnalyzeImage = async () => {
+    if (!imageFile) return
+    setAnalyzingImage(true)
+    const userMsg = { role: 'user', content: input.trim() || '請分析這張圖片', image: imagePreview }
+    const history = [...messages, userMsg]
+    setMessages(history)
+    setInput('')
+    setImageFile(null)
+    setImagePreview(null)
+    setStreaming(true)
+    const assistantMsg = { role: 'assistant', content: '', model: 'gpt4o' }
+    setMessages([...history, assistantMsg])
+    try {
+      const result = await analyzeImage(imageFile, userMsg.content)
+      assistantMsg.content = result
+      setMessages(prev => { const u = [...prev]; u[u.length - 1] = { ...assistantMsg }; return u })
+    } catch (err) {
+      assistantMsg.content = `❌ ${err.message}`
+      setMessages(prev => { const u = [...prev]; u[u.length - 1] = { ...assistantMsg }; return u })
+    } finally {
+      setAnalyzingImage(false)
+      setStreaming(false)
+    }
+  }
+
   const activeModel = MODELS.find(m => m.id === model)
 
   return (
@@ -146,11 +185,25 @@ export default function AiChat() {
 
       {/* Input */}
       <div className="pt-4 border-t border-gpark-border">
+        {/* Image preview */}
+        {imagePreview && (
+          <div className="mb-3 relative inline-block">
+            <img src={imagePreview} alt="預覽" className="h-24 rounded-lg border border-gpark-border object-cover" />
+            <button
+              onClick={() => { setImageFile(null); setImagePreview(null) }}
+              className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white"
+            >
+              <X size={10} />
+            </button>
+            <span className="block text-xs text-gpark-muted mt-1">GPT-4o Vision 分析</span>
+          </div>
+        )}
+
         <div className="flex gap-2 items-end">
           {/* Voice button */}
           <button
             onClick={recording ? stopRecording : startRecording}
-            disabled={streaming || transcribing}
+            disabled={streaming || transcribing || !!imageFile}
             title={recording ? '停止錄音' : '語音輸入 (Whisper)'}
             className={`px-3 py-2.5 rounded-lg border text-sm flex items-center gap-1.5 transition-all disabled:opacity-40 ${
               recording
@@ -158,13 +211,26 @@ export default function AiChat() {
                 : 'border-gpark-border text-gpark-muted hover:border-gpark-green hover:text-gpark-green'
             }`}
           >
-            {transcribing ? (
-              <span className="w-4 h-4 border-2 border-gpark-green border-t-transparent rounded-full animate-spin" />
-            ) : recording ? (
-              <><Square size={13} fill="currentColor" /> 停止</>
-            ) : (
-              <Mic size={15} />
-            )}
+            {transcribing
+              ? <span className="w-4 h-4 border-2 border-gpark-green border-t-transparent rounded-full animate-spin" />
+              : recording ? <><Square size={13} fill="currentColor" /> 停止</>
+              : <Mic size={15} />
+            }
+          </button>
+
+          {/* Image upload button */}
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={streaming || recording}
+            title="上傳圖片 (GPT-4o Vision)"
+            className={`px-3 py-2.5 rounded-lg border text-sm flex items-center gap-1.5 transition-all disabled:opacity-40 ${
+              imageFile
+                ? 'bg-gpark-indigo/10 border-gpark-indigo/50 text-gpark-indigo'
+                : 'border-gpark-border text-gpark-muted hover:border-gpark-indigo hover:text-gpark-indigo'
+            }`}
+          >
+            <ImagePlus size={15} />
           </button>
 
           <textarea
@@ -172,7 +238,11 @@ export default function AiChat() {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKey}
-            placeholder={transcribing ? 'Whisper 轉譯中…' : `輸入訊息，或按麥克風語音輸入… (Enter 送出)`}
+            placeholder={
+              transcribing ? 'Whisper 轉譯中…'
+              : imageFile ? '輸入分析提示（選填），或直接送出分析圖片…'
+              : '輸入訊息，或用麥克風 / 圖片…  (Enter 送出)'
+            }
             rows={1}
             disabled={streaming || transcribing}
             className="gpark-input flex-1 resize-none min-h-[42px] max-h-32 leading-relaxed disabled:opacity-50"
@@ -183,20 +253,20 @@ export default function AiChat() {
           />
 
           <button
-            onClick={() => sendMessage()}
-            disabled={!input.trim() || streaming}
+            onClick={imageFile ? handleAnalyzeImage : () => sendMessage()}
+            disabled={(!input.trim() && !imageFile) || streaming}
             className="gpark-btn-primary px-3 py-2.5 flex items-center gap-2 disabled:opacity-40"
           >
-            {streaming
+            {streaming || analyzingImage
               ? <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               : <Send size={15} />
             }
           </button>
         </div>
         <p className="text-xs text-gpark-muted mt-2">
-          {recording
-            ? '🔴 錄音中… 按停止後 Whisper 自動轉譯'
-            : `模型：${activeModel.label} · 語音：OpenAI Whisper`
+          {recording ? '🔴 錄音中… 按停止後 Whisper 自動轉譯'
+            : imageFile ? '📷 GPT-4o Vision 就緒'
+            : `模型：${activeModel.label} · 語音：Whisper · 圖片：GPT-4o Vision`
           }
         </p>
       </div>
@@ -248,6 +318,9 @@ function ChatBubble({ message, isLast }) {
       }`}>
         {!isUser && modelInfo && (
           <span className={`text-xs font-medium ${modelInfo.color} block mb-1.5`}>{modelInfo.label}</span>
+        )}
+        {message.image && (
+          <img src={message.image} alt="上傳圖片" className="max-h-48 rounded-lg mb-2 object-contain" />
         )}
         {message.content}
         {isLast && !message.content && (

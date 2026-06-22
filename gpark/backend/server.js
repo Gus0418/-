@@ -9,7 +9,7 @@ import { createClient } from '@supabase/supabase-js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
-const upload = multer({ dest: '/tmp/gpark-audio/' })
+const upload = multer({ dest: '/tmp/gpark-uploads/' })
 
 // --- Clients ---
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
@@ -169,6 +169,37 @@ app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
   } catch (err) {
     fs.unlinkSync(req.file.path)
     console.error('Whisper error:', err.message)
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// --- GPT-4o Vision 圖片分析 ---
+// POST /api/analyze-image  (multipart: field "image", optional field "prompt")
+app.post('/api/analyze-image', upload.single('image'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: '未收到圖片' })
+
+  try {
+    const imageData = fs.readFileSync(req.file.path)
+    const base64 = imageData.toString('base64')
+    const mimeType = req.file.mimetype || 'image/jpeg'
+    const userPrompt = req.body.prompt || '請詳細分析這張圖片的內容，並用繁體中文說明你看到了什麼。'
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}`, detail: 'high' } },
+          { type: 'text', text: userPrompt },
+        ],
+      }],
+      max_tokens: 1024,
+    })
+    fs.unlinkSync(req.file.path)
+    res.json({ result: response.choices[0].message.content })
+  } catch (err) {
+    if (req.file?.path) fs.unlinkSync(req.file.path).catch?.(() => {})
+    console.error('Vision error:', err.message)
     res.status(500).json({ error: err.message })
   }
 })

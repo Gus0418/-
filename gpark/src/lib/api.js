@@ -43,6 +43,19 @@ export async function* chatStream(messages, context, model = 'claude') {
   }
 }
 
+// GPT-4o Vision 圖片分析
+export async function analyzeImage(imageFile, prompt) {
+  const form = new FormData()
+  form.append('image', imageFile)
+  if (prompt) form.append('prompt', prompt)
+  const res = await fetch(`${BASE}/api/analyze-image`, { method: 'POST', body: form })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }))
+    throw new Error(err.error || 'Image analysis failed')
+  }
+  return (await res.json()).result
+}
+
 // Whisper 語音轉文字 — audioBlob: Blob (webm/ogg/mp4)
 export async function transcribeAudio(audioBlob) {
   const form = new FormData()
