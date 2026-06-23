@@ -9,15 +9,17 @@ export function useRealtimeNotifications(onInsert) {
   const channelRef = useRef(null)
 
   useEffect(() => {
-    channelRef.current = supabase
-      .channel('notifications-rt')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
-        onInsert?.(payload.new)
-      })
-      .subscribe()
+    try {
+      channelRef.current = supabase
+        .channel('notifications-rt-' + Date.now())
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
+          onInsert?.(payload.new)
+        })
+        .subscribe()
+    } catch {}
 
     return () => {
-      supabase.removeChannel(channelRef.current)
+      if (channelRef.current) supabase.removeChannel(channelRef.current).catch?.(() => {})
     }
   }, [])
 }
@@ -27,12 +29,15 @@ export function useRealtimeNotifications(onInsert) {
  */
 export function useRealtimeWebhooks(onInsert) {
   useEffect(() => {
-    const ch = supabase
-      .channel('webhooks-rt')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'webhook_logs' }, payload => {
-        onInsert?.(payload.new)
-      })
-      .subscribe()
-    return () => supabase.removeChannel(ch)
+    let ch
+    try {
+      ch = supabase
+        .channel('webhooks-rt-' + Date.now())
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'webhook_logs' }, payload => {
+          onInsert?.(payload.new)
+        })
+        .subscribe()
+    } catch {}
+    return () => { if (ch) supabase.removeChannel(ch).catch?.(() => {}) }
   }, [])
 }

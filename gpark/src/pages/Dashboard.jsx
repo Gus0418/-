@@ -14,26 +14,30 @@ export default function Dashboard() {
 
   const fetchData = async () => {
     setLoading(true)
-    const [
-      { count: unreadNotif },
-      { count: totalWebhooks },
-      { count: pendingEvents },
-      { count: activeTokens },
-      { data: notifications },
-      { data: webhooks },
-    ] = await Promise.all([
-      supabase.from('notifications').select('*', { count: 'exact', head: true }).eq('status', 'unread'),
-      supabase.from('webhook_logs').select('*', { count: 'exact', head: true }),
-      supabase.from('integration_events').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('api_tokens').select('*', { count: 'exact', head: true }).eq('is_active', true),
-      supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(5),
-      supabase.from('webhook_logs').select('*').order('created_at', { ascending: false }).limit(5),
-    ])
-
-    setStats({ unreadNotif, totalWebhooks, pendingEvents, activeTokens })
-    setRecentNotifications(notifications || [])
-    setRecentWebhooks(webhooks || [])
-    setLoading(false)
+    try {
+      const [
+        { count: unreadNotif },
+        { count: totalWebhooks },
+        { count: pendingEvents },
+        { count: activeTokens },
+        { data: notifications },
+        { data: webhooks },
+      ] = await Promise.all([
+        supabase.from('notifications').select('*', { count: 'exact', head: true }).eq('status', 'unread'),
+        supabase.from('webhook_logs').select('*', { count: 'exact', head: true }),
+        supabase.from('integration_events').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('api_tokens').select('*', { count: 'exact', head: true }).eq('is_active', true),
+        supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(5),
+        supabase.from('webhook_logs').select('*').order('created_at', { ascending: false }).limit(5),
+      ])
+      setStats({ unreadNotif, totalWebhooks, pendingEvents, activeTokens })
+      setRecentNotifications(notifications || [])
+      setRecentWebhooks(webhooks || [])
+    } catch {
+      setStats({ unreadNotif: 0, totalWebhooks: 0, pendingEvents: 0, activeTokens: 0 })
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { fetchData() }, [])
