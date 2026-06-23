@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-gpark-bg text-gpark-text;
+    scrollbar-width: thin;
+    scrollbar-color: #1e2740 transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: #1e2740;
+    border-radius: 3px;
+  }
+}
+
+@layer components {
+  .gpark-card {
+    @apply bg-gpark-card border border-gpark-border rounded-xl p-5;
+  }
+
+  .gpark-input {
+    @apply bg-gpark-surface border border-gpark-border rounded-lg px-4 py-2.5
+      text-gpark-text placeholder-gpark-muted
+      focus:outline-none focus:border-gpark-green focus:ring-1 focus:ring-gpark-green
+      transition-colors text-sm;
+  }
+
+  .gpark-btn-primary {
+    @apply bg-gpark-green text-white font-medium px-5 py-2.5 rounded-lg
+      hover:bg-gpark-green-dim active:scale-95
+      transition-all duration-150 text-sm;
+  }
+
+  .gpark-btn-ghost {
+    @apply bg-transparent border border-gpark-border text-gpark-subtle font-medium px-4 py-2 rounded-lg
+      hover:border-gpark-green hover:text-gpark-green
+      transition-all duration-150 text-sm;
+  }
+}
